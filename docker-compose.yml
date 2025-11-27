@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres-hl7
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hl7user
+      POSTGRES_PASSWORD: hl7pass
+      POSTGRES_DB: hl7db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hl7net
+
+  mirth:
+    image: nextgenhealthcare/connect
+    container_name: mirth
+    restart: unless-stopped
+    ports:
+      - "8080:8080"   # panel
+      - "8443:8443"
+      - "6661:6661"   # Listener HL7 TCP
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/hl7db
+    networks:
+      - hl7net
+    depends_on:
+      - postgres
+
+  hapi:
+    image: hapiproject/hapi:latest
+    container_name: hapi-fhir
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - hl7net
+
+volumes:
+  postgres_data:
+
+networks:
+  hl7net:
