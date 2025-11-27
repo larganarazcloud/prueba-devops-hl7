@@ -15,7 +15,7 @@ services:
       - hl7net
 
   mirth:
-    image: jeanmavromatis/mirth-connect:postgres
+    image: nextgenhealthcare/connect:4.4.1
     container_name: mirth
     restart: unless-stopped
     ports:
@@ -29,7 +29,7 @@ services:
       DATABASE_PASSWORD: hl7pass
       DATABASE_MAXCONNECTIONS: 20
     volumes:
-      - mirth_data:/opt/connect/appdata
+      - /opt/mirth-data:/opt/connect/appdata
     depends_on:
       - postgres
     networks:
@@ -59,7 +59,6 @@ services:
 
 volumes:
   postgres_data:
-  mirth_data:
   portainer_data:
 
 networks:
