@@ -19,9 +19,9 @@ services:
     container_name: mirth
     restart: unless-stopped
     ports:
-      - "8080:8080"   # panel
+      - "8080:8080"
       - "8443:8443"
-      - "6661:6661"   # Listener HL7 TCP
+      - "6661:6661"
     environment:
       DATABASE_URL: jdbc:postgresql://postgres:5432/hl7db
     networks:
@@ -38,8 +38,22 @@ services:
     networks:
       - hl7net
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"        # Panel Portainer
+      - "9443:9443"        # Panel HTTPS
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - hl7net
+
 volumes:
   postgres_data:
+  portainer_data:
 
 networks:
   hl7net:
