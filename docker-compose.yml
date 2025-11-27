@@ -15,7 +15,7 @@ services:
       - hl7net
 
   mirth:
-    image: nextgenhealthcare/connect
+    image: jeanmavromatis/mirth-connect:postgres
     container_name: mirth
     restart: unless-stopped
     ports:
@@ -23,11 +23,17 @@ services:
       - "8443:8443"
       - "6661:6661"
     environment:
+      DATABASE: postgres
       DATABASE_URL: jdbc:postgresql://postgres:5432/hl7db
-    networks:
-      - hl7net
+      DATABASE_USERNAME: hl7user
+      DATABASE_PASSWORD: hl7pass
+      DATABASE_MAXCONNECTIONS: 20
+    volumes:
+      - mirth_data:/opt/connect/appdata
     depends_on:
       - postgres
+    networks:
+      - hl7net
 
   hapi:
     image: hapiproject/hapi:latest
@@ -43,8 +49,8 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - "9000:9000"        # Panel Portainer
-      - "9443:9443"        # Panel HTTPS
+      - "9000:9000"
+      - "9443:9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
@@ -53,6 +59,7 @@ services:
 
 volumes:
   postgres_data:
+  mirth_data:
   portainer_data:
 
 networks:
