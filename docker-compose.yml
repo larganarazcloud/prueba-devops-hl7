@@ -16,27 +16,33 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - hl7net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hl7user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 
   mirth:
-    image: nextgenhealthcare/connect:4.3.0   # Versión compatible con Admin Launcher 1.3.0
+    image: nextgenhealthcare/connect:4.3.0
     container_name: mirth
     restart: unless-stopped
     ports:
-      - "8080:8080"     # Web interface (HTTP)
-      - "8443:8443"     # Admin Launcher (HTTPS)
-      - "6661:6661"     # HL7 Listener
+      - "8080:8080"
+      - "8443:8443"
+      - "6661:6661"
     environment:
       DATABASE: postgres
       DATABASE_URL: jdbc:postgresql://postgres-hl7:5432/hl7db
       DATABASE_USERNAME: hl7user
       DATABASE_PASSWORD: hl7pass
       DATABASE_MAXCONNECTIONS: 20
-      # ❗ Java correcto sin overrides de HTTP
     volumes:
       - mirth_data:/opt/connect/appdata
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - hl7net
 
