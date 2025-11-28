@@ -17,12 +17,14 @@ services:
     networks:
       - hl7net
 
+
   mirth:
     image: nextgenhealthcare/connect:4.4.1
     container_name: mirth
     restart: unless-stopped
     ports:
-      - "8080:8080"     # HTTP (lo usará el Admin Launcher)
+      - "8080:8080"     # Web interface (HTTP)
+      - "8443:8443"     # Admin Launcher (HTTPS)
       - "6661:6661"     # HL7 Listener
     environment:
       DATABASE: postgres
@@ -30,9 +32,7 @@ services:
       DATABASE_USERNAME: hl7user
       DATABASE_PASSWORD: hl7pass
       DATABASE_MAXCONNECTIONS: 20
-
-      # 🔥 Clave: obliga a Mirth a usar HTTP para el Admin
-      JAVA_OPTS: "-Dserver.protocol=http"
+      # ❗ ELIMINADO: JAVA_OPTS -Dserver.protocol=http (causaba error con JNLP)
     volumes:
       - mirth_data:/opt/connect/appdata
     depends_on:
@@ -40,14 +40,16 @@ services:
     networks:
       - hl7net
 
+
   hapi:
     image: hapiproject/hapi:latest
     container_name: hapi-fhir
     restart: unless-stopped
     ports:
-      - "8081:8080"     # HAPI FHIR Server
+      - "8081:8080"     # HAPI FHIR API
     networks:
       - hl7net
+
 
   portainer:
     image: portainer/portainer-ce:latest
