@@ -20,7 +20,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U hl7user -d hl7db"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 10s
 
 
@@ -29,11 +29,11 @@ services:
     container_name: mirth
     restart: unless-stopped
     ports:
-      - "8080:8080"   # Web interface
+      - "8080:8080"   # Web Dashboard
       - "8443:8443"   # Admin Launcher
       - "6661:6661"   # HL7 Listener
     environment:
-      DATABASE_TYPE: postgres
+      DATABASE: postgres
       DATABASE_URL: jdbc:postgresql://postgres-hl7:5432/hl7db
       DATABASE_USERNAME: hl7user
       DATABASE_PASSWORD: hl7pass
