@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: hl7user
       POSTGRES_PASSWORD: hl7pass
       POSTGRES_DB: hl7db
+      TZ: America/Argentina/Buenos_Aires
     ports:
       - "5432:5432"
     volumes:
@@ -23,15 +24,14 @@ services:
       retries: 10
       start_period: 10s
 
-
   mirth:
     image: nextgenhealthcare/connect:4.3.0
     container_name: mirth
     restart: unless-stopped
     ports:
-      - "8080:8080"   # Web Dashboard
-      - "8443:8443"   # Admin Launcher
-      - "6661:6661"   # HL7 Listener
+      - "8080:8080"
+      - "8443:8443"
+      - "6661:6661"
     environment:
       DATABASE: postgres
       DATABASE_URL: jdbc:postgresql://postgres-hl7:5432/hl7db
@@ -46,7 +46,6 @@ services:
     networks:
       - hl7net
 
-
   hapi:
     image: hapiproject/hapi:latest
     container_name: hapi-fhir
@@ -55,7 +54,6 @@ services:
       - "8081:8080"
     networks:
       - hl7net
-
 
   portainer:
     image: portainer/portainer-ce:latest
