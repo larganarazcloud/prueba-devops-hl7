@@ -19,7 +19,7 @@ services:
 
 
   mirth:
-    image: nextgenhealthcare/connect:4.4.1
+    image: nextgenhealthcare/connect:4.3.0   # Versión compatible con Admin Launcher 1.3.0
     container_name: mirth
     restart: unless-stopped
     ports:
@@ -32,7 +32,7 @@ services:
       DATABASE_USERNAME: hl7user
       DATABASE_PASSWORD: hl7pass
       DATABASE_MAXCONNECTIONS: 20
-      # ❗ ELIMINADO: JAVA_OPTS -Dserver.protocol=http (causaba error con JNLP)
+      # ❗ Java correcto sin overrides de HTTP
     volumes:
       - mirth_data:/opt/connect/appdata
     depends_on:
@@ -46,7 +46,7 @@ services:
     container_name: hapi-fhir
     restart: unless-stopped
     ports:
-      - "8081:8080"     # HAPI FHIR API
+      - "8081:8080"
     networks:
       - hl7net
 
